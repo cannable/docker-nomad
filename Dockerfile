@@ -5,11 +5,11 @@ ARG NOMAD_VERSION=1.0.1
 
 ENV NAME nomad
 
-VOLUME ["/var/nomad", "/etc/nomad.d"]
-
 COPY ["./data", "/data"]
 
 RUN ["/bin/bash", "/data/build-nomad.sh"]
+
+VOLUME ["/var/nomad", "/etc/nomad.d"]
 
 # Port info can be found here:
 # https://www.nomadproject.io/docs/install/production/requirements

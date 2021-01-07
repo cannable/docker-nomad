@@ -77,7 +77,7 @@ nomad -autocomplete-install
 complete -C /usr/local/bin/nomad nomad
 
 # Write simple example server config file
-cat > /etc/nomad.d/nomad.hcl << CONF
+cat << 'CFG' > /etc/nomad.d/nomad.hcl
 # Full configuration options can be found at https://www.nomadproject.io/docs/configuration
 
 datacenter = "dc01"
@@ -88,7 +88,7 @@ server {
   enabled = true
   bootstrap_expect = 1
 }
-CONF
+CFG
 
 
 # Cleanup
