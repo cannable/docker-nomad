@@ -5,15 +5,12 @@
 # ------------------------------------------------------------------------------
 
 url_prefix="https://releases.hashicorp.com/nomad"
-s6_version="v${S6_VERSION}"
 arch=$(uname -i)
 
 dnf install -y \
     bash-completion \
     unzip
 
-# Debian's designation for aarch64 is arm64, so we need to tweak this to fit
-# what s6-overlay uses, otherwise the download fails
 case "${arch}" in
 
     x86_64)
