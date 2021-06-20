@@ -5,24 +5,20 @@ if [[ $# -ne 1 ]]; then
     exit 1
 fi
 
-NOMAD_VERSION=$1
+version=$1
+arches=(amd64 arm64)
 
-podman pull --arch amd64 docker.io/library/almalinux:8
-podman pull --arch amd64 docker.io/library/almalinux:8
+for arch in ${arches[@]}; do
+    buildah bud --arch "$arch" --tag "cannable/nomad:${arch}-${version}" --build-arg "NOMAD_VERSION=${version}" -f ./Dockerfile .
+    buildah push -f v2s2 "cannable/nomad:${arch}-${version}" "docker://cannable/nomad:${arch}-${version}"
+done
 
-buildah bud --arch amd64 --tag "cannable/nomad:amd64-${NOMAD_VERSION}" --build-arg "NOMAD_VERSION=${NOMAD_VERSION}" -f ./Dockerfile .
-buildah bud --arch arm64 --tag "cannable/nomad:arm64-${NOMAD_VERSION}" --build-arg "NOMAD_VERSION=${NOMAD_VERSION}" -f ./Dockerfile .
+buildah manifest create "cannable/nomad:${version}"
 
+for arch in ${arches[@]}; do
+    buildah manifest add "cannable/nomad:${version}" "docker.io/cannable/nomad:${arch}-${version}"
+done
 
-buildah push -f v2s2 "cannable/nomad:amd64-${NOMAD_VERSION}" "docker://cannable/nomad:amd64-${NOMAD_VERSION}"
-buildah push -f v2s2 "cannable/nomad:arm64-${NOMAD_VERSION}" "docker://cannable/nomad:arm64-${NOMAD_VERSION}"
+buildah manifest push -f v2s2 "cannable/nomad:${version}" "docker://cannable/nomad:${version}"
 
-
-buildah manifest create "cannable/nomad:${NOMAD_VERSION}"
-
-buildah manifest add "cannable/nomad:${NOMAD_VERSION}" "docker.io/cannable/nomad:amd64-${NOMAD_VERSION}"
-buildah manifest add "cannable/nomad:${NOMAD_VERSION}" "docker.io/cannable/nomad:arm64-${NOMAD_VERSION}"
-
-buildah manifest push -f v2s2 "cannable/nomad:${NOMAD_VERSION}" "docker://cannable/nomad:${NOMAD_VERSION}"
-
-buildah manifest rm "cannable/nomad:${NOMAD_VERSION}"
+buildah manifest rm "cannable/nomad:${version}"
