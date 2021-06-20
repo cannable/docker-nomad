@@ -1,18 +1,21 @@
 #!/bin/bash
 
+. ./env_build.sh
+
 if [[ $# -ne 1 ]]; then
     echo Make an existing tag latest.
-    echo latest.sh nomad_version
+    echo latest.sh version
     exit 1
 fi
 
-NOMAD_VERSION=$1
+version=$1
 
-buildah manifest create "cannable/nomad:latest"
+buildah manifest create "${IMAGE}:latest"
 
-buildah manifest add "cannable/nomad:latest" "docker.io/cannable/nomad:amd64-${NOMAD_VERSION}"
-buildah manifest add "cannable/nomad:latest" "docker.io/cannable/nomad:arm64-${NOMAD_VERSION}"
+for arch in ${ARCHES[@]}; do
+    buildah manifest add "${IMAGE}:latest" "docker.io/${IMAGE}:${arch}-${version}"
+done
 
-buildah manifest push -f v2s2 "cannable/nomad:latest" "docker://cannable/nomad:latest"
+buildah manifest push -f v2s2 "${IMAGE}:latest" "docker://${IMAGE}:latest"
 
-buildah manifest rm "cannable/nomad:latest"
+buildah manifest rm "${IMAGE}:latest"
