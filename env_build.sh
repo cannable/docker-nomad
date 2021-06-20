@@ -1,0 +1,3 @@
+IMAGE="cannable/nomad"
+VERSION_ARG="NOMAD_VERSION"
+ARCHES=(amd64 arm64)

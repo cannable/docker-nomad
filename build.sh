@@ -1,11 +1,9 @@
 #!/bin/bash
 
-IMAGE="cannable/nomad"
-VERSION_ARG="NOMAD_VERSION"
-ARCHES=(amd64 arm64)
+. ./env_build.sh
 
 if [[ $# -ne 1 ]]; then
-    echo build.sh nomad_version
+    echo build.sh version
     exit 1
 fi
 
